@@ -6,6 +6,7 @@
 package testlog;
 
 import admin.adminForm;
+import admin.userForm;
 import config.dbConnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,12 +25,21 @@ public class logForm extends javax.swing.JFrame {
         initComponents();
     }
     
+    static String status;
+    static String type;
+    
     public static boolean loginAcc(String username, String password){
         dbConnector connector = new dbConnector();
         try{
             String query = "SELECT * FROM tbl_user  WHERE u_username = '" + username + "' AND u_password = '" + password + "'";
             ResultSet resultSet = connector.getData(query);
-            return resultSet.next();
+            if (resultSet.next()){
+                status = resultSet.getString("u_status");
+                type = resultSet.getString("u_type");
+                return true;
+            }else{
+             return false;
+            }          
         }catch (SQLException ex) {
             return false;
         }
@@ -157,10 +167,11 @@ public class logForm extends javax.swing.JFrame {
                         .addGap(18, 18, 18)))
                 .addComponent(login)
                 .addGap(90, 90, 90)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(register)
-                    .addComponent(jLabel2))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(register)))
                 .addContainerGap())
         );
 
@@ -188,10 +199,23 @@ public class logForm extends javax.swing.JFrame {
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
         // TODO add your handling code here:
         if(loginAcc(user.getText(),password.getText())){
+            if(!status.equals("Active")){
+            JOptionPane.showMessageDialog(null, "In Active Account, Contact the Admin!");
+            }else{
             JOptionPane.showMessageDialog(null, "Login Success!");
-            adminForm ads = new adminForm();
-            ads.setVisible(true);
-            this.dispose();
+            
+            if(type.equals("Admin")){
+               adminForm ads = new adminForm();
+               ads.setVisible(true);
+               this.dispose();
+            }else if(type.equals("User")){
+                userForm usf = new userForm();
+                usf.setVisible(true);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(null, "No Account Type Found, Contact the Admin!");
+            }                  
+           }
         }else{
             JOptionPane.showMessageDialog(null, "Login Failed!");
         }

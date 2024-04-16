@@ -252,7 +252,7 @@ public class regForm extends javax.swing.JFrame {
             
          JOptionPane.showMessageDialog(null, "All fields are required!"); 
          
-        }else if(password.getText().length()<8){
+        }else if(password.getText().length()>8){
         JOptionPane.showMessageDialog(null, "Max password character should be 8 and above!");   
         password.setText("");
         }else if(duplicateCheck()){
